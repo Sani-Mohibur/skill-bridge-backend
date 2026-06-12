@@ -5,6 +5,7 @@ import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
 import availabilityRouter from "./modules/availability/availability.route";
 import bookingRouter from "./modules/booking/booking.route";
+import reviewRouter from "./modules/review/review.route";
 
 const app = express();
 
@@ -31,5 +32,6 @@ app.get("/", (req, res) => {
 // 4. Custom Application API Routes
 app.use("/api/availability", availabilityRouter);
 app.use("/api/bookings", bookingRouter);
+app.use("/api/reviews", reviewRouter);
 
 export default app;
