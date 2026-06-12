@@ -1,0 +1,33 @@
+import { Router } from "express";
+import { availabilityController } from "./availability.controller.js";
+import { requireAuth } from "../../middlewares/auth.middleware.js";
+import { USER_ROLES } from "../../constants/user.constants.js";
+
+const availabilityRouter = Router();
+
+// 1. Public/Student - View all open slots
+availabilityRouter.get("/", availabilityController.getAllAvailabilities);
+
+// 2. Tutor Only - Manage slots
+availabilityRouter.post(
+  "/create-slot",
+  requireAuth([USER_ROLES.TUTOR]),
+  availabilityController.addAvailabilitySlot,
+);
+availabilityRouter.get(
+  "/my-slots",
+  requireAuth([USER_ROLES.TUTOR]),
+  availabilityController.getTutorAvailabilities,
+);
+availabilityRouter.put(
+  "/:id",
+  requireAuth([USER_ROLES.TUTOR]),
+  availabilityController.updateAvailabilitySlot,
+);
+availabilityRouter.delete(
+  "/:id",
+  requireAuth([USER_ROLES.TUTOR]),
+  availabilityController.deleteAvailabilitySlot,
+);
+
+export default availabilityRouter;

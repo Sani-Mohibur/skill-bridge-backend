@@ -1,0 +1,9 @@
+model StudentProfile {
+    id       String    @id @default(uuid())
+    userId   String    @unique
+    user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    bookings Booking[]
+    reviews  Review[]
+
+    @@map("student_profile")
+}
