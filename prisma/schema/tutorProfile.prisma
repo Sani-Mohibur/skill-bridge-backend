@@ -1,15 +1,20 @@
 model TutorProfile {
-    id             String         @id @default(uuid())
-    userId         String         @unique
-    user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-    bio            String?
-    pricePerHour   Float          @default(0.0)
-    rating         Float          @default(0.0)
-    categoryId     String?
-    category       Category?      @relation(fields: [categoryId], references: [id])
-    availabilities Availability[]
-    bookings       Booking[]
-    reviews        Review[]
+    id               String         @id @default(uuid())
+    userId           String         @unique
+    user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+    title            String?
+    bio              String?
+    qualifications   String?
+    skills           String[] // Array of subjects they teach (e.g., ["JavaScript", "Node.js"])
+    experience       Int            @default(0) // Years of teaching experience
+    pricePerHour     Float          @default(0.0)
+    rating           Float          @default(0.0)
+    totalHoursTaught Int            @default(0)
+    categoryId       String?
+    category         Category?      @relation(fields: [categoryId], references: [id])
+    availabilities   Availability[]
+    bookings         Booking[]
+    reviews          Review[]
 
     @@map("tutor_profile")
 }
