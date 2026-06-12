@@ -4,6 +4,7 @@ import morgan from "morgan";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
 import availabilityRouter from "./modules/availability/availability.route";
+import bookingRouter from "./modules/booking/booking.route";
 
 const app = express();
 
@@ -29,5 +30,6 @@ app.get("/", (req, res) => {
 
 // 4. Custom Application API Routes
 app.use("/api/availability", availabilityRouter);
+app.use("/api/bookings", bookingRouter);
 
 export default app;
