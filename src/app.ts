@@ -7,6 +7,7 @@ import availabilityRouter from "./modules/availability/availability.route";
 import bookingRouter from "./modules/booking/booking.route";
 import reviewRouter from "./modules/review/review.route";
 import profileRouter from "./modules/profile/profile.route";
+import tutorRouter from "./modules/tutor/tutor.route";
 
 const app = express();
 
@@ -35,5 +36,6 @@ app.use("/api/availability", availabilityRouter);
 app.use("/api/bookings", bookingRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/profile", profileRouter);
+app.use("/api/tutor", tutorRouter);
 
 export default app;
