@@ -26,15 +26,34 @@ const add = async ({
   });
   if (!booking) throw new Error("No completed booking found to review.");
 
-  // 3. Save the review
-  return await prisma.review.create({
-    data: {
-      studentProfileId: student.id,
-      tutorProfileId: booking.tutorProfileId,
-      bookingId,
-      rating,
-      comment: comment ?? null,
-    },
+  // Execute review creation and rating recalculation in a transaction
+  return await prisma.$transaction(async (tx) => {
+    // Save the new review
+    const newReview = await tx.review.create({
+      data: {
+        studentProfileId: student.id,
+        tutorProfileId: booking.tutorProfileId,
+        bookingId,
+        rating,
+        comment: comment ?? null,
+      },
+    });
+
+    // Aggregate all reviews for this tutor to calculate the average
+    const aggregations = await tx.review.aggregate({
+      where: { tutorProfileId: booking.tutorProfileId },
+      _avg: { rating: true },
+    });
+
+    const newAverageRating = aggregations._avg.rating || 0;
+
+    // Update the tutor's profile with the new rating
+    await tx.tutorProfile.update({
+      where: { id: booking.tutorProfileId },
+      data: { rating: newAverageRating },
+    });
+
+    return newReview;
   });
 };
 
