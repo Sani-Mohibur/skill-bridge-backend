@@ -1,20 +1,5 @@
 import { prisma } from "../../lib/prisma.js";
-
-// Student Interfaces
-interface UpdateStudentData {
-  phone?: string;
-  address?: string;
-  bio?: string;
-}
-
-// Tutor Interfaces
-interface UpdateTutorData {
-  title?: string;
-  bio?: string;
-  qualifications?: string;
-  pricePerHour?: number;
-  categoryId?: string;
-}
+import { UpdateStudentData, UpdateTutorData } from "./profile.interface.js";
 
 const getStudent = async (userId: string) => {
   return await prisma.studentProfile.findUnique({
@@ -40,10 +25,20 @@ const getTutor = async (userId: string) => {
   });
 };
 
+// Handle m2m - tutor have multiple category
 const updateTutor = async (userId: string, payload: UpdateTutorData) => {
+  const { categories, ...restPayload } = payload;
+
   return await prisma.tutorProfile.update({
     where: { userId },
-    data: payload,
+    data: {
+      ...restPayload,
+      ...(categories && {
+        categories: {
+          set: categories.map((id) => ({ id })),
+        },
+      }),
+    },
   });
 };
 

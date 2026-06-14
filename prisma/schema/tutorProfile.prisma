@@ -10,7 +10,6 @@ model TutorProfile {
     pricePerHour     Float          @default(0.0)
     rating           Float          @default(0.0)
     totalHoursTaught Int            @default(0)
-    categoryId       String?
     categories       Category[]
     availabilities   Availability[]
     bookings         Booking[]
