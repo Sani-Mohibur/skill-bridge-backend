@@ -20,21 +20,53 @@ async function main() {
     });
   }
 
-  // 2. Seed Default Admin User
-  console.log("Creating default admin account...");
-  await prisma.user.upsert({
-    where: { email: "admin@skillbridge.com" },
-    update: {},
-    create: {
-      id: "admin-root-id", // Explicit string ID matching Better Auth standards
-      name: "Platform Admin",
-      email: "admin@skillbridge.com",
-      emailVerified: true,
-      role: "admin",
-      // Note: In production, Better Auth handles hashed values. For manual seed testing:
-      banned: false,
-    },
+  // 2. Seed Admin account via signup API
+  const adminEmail = "farabisunny5@gmail.com";
+  console.log("Checking if admin account exists...");
+
+  const existingUser = await prisma.user.findUnique({
+    where: { email: adminEmail },
   });
+
+  if (!existingUser) {
+    console.log("Registering admin account via API endpoint...");
+    const adminData = {
+      name: "Farabi Sunny",
+      email: adminEmail,
+      password: "farabi1234",
+    };
+
+    const response = await fetch(
+      "http://localhost:5000/api/auth/sign-up/email",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(adminData),
+      },
+    );
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Auth API registration failed: ${errText}`);
+    }
+
+    console.log("Elevating user privileges to Admin role...");
+    await prisma.user.update({
+      where: { email: adminEmail },
+      data: {
+        role: "admin",
+        emailVerified: true,
+      },
+    });
+  } else {
+    console.log(
+      "Admin user account already exists. Elevating permissions just in case...",
+    );
+    await prisma.user.update({
+      where: { email: adminEmail },
+      data: { role: "admin" },
+    });
+  }
 
   console.log("✅ Seeding completed successfully!");
 }
@@ -47,5 +79,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
-
-// npx prisma db seed
