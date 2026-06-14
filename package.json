@@ -14,7 +14,8 @@
     "start": "node dist/server.js",
     "db:migrate": "npx prisma migrate dev",
     "db:studio": "npx prisma studio",
-    "db:generate": "npx prisma generate"
+    "db:generate": "npx prisma generate",
+    "db:seed": "npx prisma db seed"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
@@ -35,5 +36,8 @@
     "express": "^5.2.1",
     "morgan": "^1.11.0",
     "pg": "^8.21.0"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }
