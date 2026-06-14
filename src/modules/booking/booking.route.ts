@@ -33,5 +33,10 @@ bookingRouter.get(
   requireAuth([USER_ROLES.TUTOR]),
   bookingController.getTutorBookings,
 );
+bookingRouter.get(
+  "/slot-students/:availabilityId",
+  requireAuth([USER_ROLES.TUTOR]),
+  bookingController.getSlotStudents,
+);
 
 export default bookingRouter;

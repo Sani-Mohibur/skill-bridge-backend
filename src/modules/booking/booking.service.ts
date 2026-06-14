@@ -124,10 +124,42 @@ const getTutorBookingsService = async (userId: string) => {
   });
 };
 
+const getSlotStudentsService = async (
+  tutorUserId: string,
+  availabilityId: string,
+) => {
+  // First find the tutor's profile id using their authenticated userId
+  const tutorProfile = await prisma.tutorProfile.findUnique({
+    where: { userId: tutorUserId },
+  });
+
+  if (!tutorProfile) {
+    throw new Error("Tutor profile not found.");
+  }
+
+  return await prisma.booking.findMany({
+    where: {
+      availabilityId,
+      tutorProfileId: tutorProfile.id, // Securely ensures the booking belongs to this tutor
+    },
+    include: {
+      studentProfile: {
+        select: {
+          id: true,
+          user: {
+            select: { name: true, email: true },
+          },
+        },
+      },
+    },
+  });
+};
+
 export const bookingService = {
   bookSlotService,
   cancelBookingService,
   completeBookingService,
   getStudentBookingsService,
   getTutorBookingsService,
+  getSlotStudentsService,
 };
