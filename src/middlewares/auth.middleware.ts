@@ -29,6 +29,15 @@ export const requireAuth = (allowedRoles?: UserRole[]) => {
         return;
       }
 
+      // Check if the user has been banned
+      if ((sessionContext.user as any).banned === true) {
+        res.status(403).json({
+          success: false,
+          message: "Your account has been suspended.",
+        });
+        return;
+      }
+
       // 2. Role Verification Guard (if specific roles are restricted)
       if (
         allowedRoles &&
