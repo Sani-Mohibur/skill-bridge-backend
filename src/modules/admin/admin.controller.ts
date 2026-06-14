@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { adminService } from "./admin.service.js";
 import catchAsync from "../../utils/catchAsync.js";
 import ApiError from "../../errors/ApiError.js";
+import sendResponse from "../../utils/sendResponse.js";
 
 const getDashboardStats = catchAsync(
   async (req: Request, res: Response): Promise<void> => {
@@ -52,8 +53,22 @@ const createCategory = catchAsync(
   },
 );
 
+const deleteCategory = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  await adminService.deleteCategory(id as string);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Category deleted successfully.",
+    data: null,
+  });
+});
+
 export const adminController = {
   getDashboardStats,
   toggleUserBan,
   createCategory,
+  deleteCategory,
 };

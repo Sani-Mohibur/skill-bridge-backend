@@ -47,8 +47,24 @@ const createCategory = async (name: string) => {
   });
 };
 
+const deleteCategory = async (id: string) => {
+  // Check if the category exists
+  const category = await prisma.category.findUnique({
+    where: { id },
+  });
+
+  if (!category) {
+    throw new ApiError(404, "Category not found.");
+  }
+
+  return await prisma.category.delete({
+    where: { id },
+  });
+};
+
 export const adminService = {
   getDashboardStats,
   updateUserBanStatus,
   createCategory,
+  deleteCategory,
 };

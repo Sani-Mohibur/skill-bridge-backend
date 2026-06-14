@@ -11,5 +11,6 @@ adminRouter.use(requireAuth([USER_ROLES.ADMIN as any]));
 adminRouter.get("/stats", adminController.getDashboardStats);
 adminRouter.patch("/users/:userId/ban", adminController.toggleUserBan);
 adminRouter.post("/categories", adminController.createCategory);
+adminRouter.delete("/categories/:id", adminController.deleteCategory);
 
 export default adminRouter;
