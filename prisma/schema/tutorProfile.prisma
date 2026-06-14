@@ -11,7 +11,7 @@ model TutorProfile {
     rating           Float          @default(0.0)
     totalHoursTaught Int            @default(0)
     categoryId       String?
-    category         Category?      @relation(fields: [categoryId], references: [id])
+    categories       Category[]
     availabilities   Availability[]
     bookings         Booking[]
     reviews          Review[]

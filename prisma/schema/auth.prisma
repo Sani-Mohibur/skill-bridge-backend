@@ -8,7 +8,7 @@ model User {
     updatedAt      DateTime        @updatedAt
     sessions       Session[]
     accounts       Account[]
-    role           String          @default("student") // "student" | "tutor" | "admin"
+    role           String // "student" | "tutor" | "admin" - Better auth fills student if this field is empty
     banned         Boolean         @default(false)
     studentProfile StudentProfile?
     tutorProfile   TutorProfile?

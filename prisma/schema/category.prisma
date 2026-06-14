@@ -1,7 +1,9 @@
 model Category {
-    id            String         @id @default(uuid())
-    name          String         @unique
-    tutorProfiles TutorProfile[]
+    id        String         @id @default(uuid())
+    name      String         @unique
+    createdAt DateTime       @default(now())
+    updatedAt DateTime       @updatedAt
+    tutors    TutorProfile[]
 
-    @@map("category")
+    @@map("categories")
 }
