@@ -31,7 +31,24 @@ const updateUserBanStatus = async (userId: string, banned: boolean) => {
   });
 };
 
+const createCategory = async (name: string) => {
+  const normalizedName = name.trim();
+
+  const existingCategory = await prisma.category.findUnique({
+    where: { name: normalizedName },
+  });
+
+  if (existingCategory) {
+    throw new ApiError(400, "Category with this name already exists.");
+  }
+
+  return await prisma.category.create({
+    data: { name: normalizedName },
+  });
+};
+
 export const adminService = {
   getDashboardStats,
   updateUserBanStatus,
+  createCategory,
 };

@@ -31,7 +31,29 @@ const toggleUserBan = catchAsync(
   },
 );
 
+const createCategory = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
+    const { name } = req.body;
+
+    if (!name || typeof name !== "string" || name.trim() === "") {
+      throw new ApiError(
+        400,
+        "Category name is required and must be a valid string.",
+      );
+    }
+
+    const data = await adminService.createCategory(name);
+
+    res.status(201).json({
+      success: true,
+      message: "Category created successfully.",
+      data,
+    });
+  },
+);
+
 export const adminController = {
   getDashboardStats,
   toggleUserBan,
+  createCategory,
 };
