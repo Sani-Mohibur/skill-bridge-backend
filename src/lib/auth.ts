@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 import { USER_ROLES } from "../constants/user.constants";
+import { APIError, createAuthMiddleware } from "better-auth/api";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -46,5 +47,28 @@ export const auth = betterAuth({
         },
       },
     },
+  },
+
+  // banned user can't login
+  hooks: {
+    before: createAuthMiddleware(async (ctx) => {
+      if (ctx.path.startsWith("/sign-in")) {
+        const body = ctx.body as any; // Better Auth pre-parses the body into ctx.body
+        const email = body?.email;
+
+        if (email) {
+          const user = await prisma.user.findUnique({
+            where: { email },
+          });
+
+          if (user?.banned) {
+            // Safely reject the sign-in with a Better Auth built-in API Error
+            throw new APIError("FORBIDDEN", {
+              message: "Your account has been banned. Access denied.",
+            });
+          }
+        }
+      }
+    }),
   },
 });

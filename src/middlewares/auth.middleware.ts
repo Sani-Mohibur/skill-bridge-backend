@@ -31,6 +31,20 @@ export const requireAuth = (allowedRoles?: UserRole[]) => {
 
       // Check if the user has been banned
       if ((sessionContext.user as any).banned === true) {
+        // 1. Convert Express headers to a standard Headers instance
+        const headers = new Headers();
+        if (req.headers.cookie) headers.append("cookie", req.headers.cookie);
+        if (req.headers.authorization)
+          headers.append("authorization", req.headers.authorization);
+
+        // 2. Revoke session server-side
+        await auth.api
+          .revokeSession({
+            headers,
+            body: { token: sessionContext.session.token },
+          })
+          .catch(() => null);
+
         res.status(403).json({
           success: false,
           message: "Your account has been suspended.",
