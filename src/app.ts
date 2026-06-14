@@ -8,6 +8,7 @@ import bookingRouter from "./modules/booking/booking.route";
 import reviewRouter from "./modules/review/review.route";
 import profileRouter from "./modules/profile/profile.route";
 import tutorRouter from "./modules/tutor/tutor.route";
+import { globalErrorHandler } from "./middlewares/globalErrorHandler";
 
 const app = express();
 
@@ -37,5 +38,8 @@ app.use("/api/bookings", bookingRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/profile", profileRouter);
 app.use("/api/tutor", tutorRouter);
+
+// 5. Global Error Handler (Must be registered last)
+app.use(globalErrorHandler);
 
 export default app;
