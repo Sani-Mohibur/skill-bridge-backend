@@ -15,18 +15,19 @@ const app = express();
 
 app.use(morgan("dev"));
 
-// 1. Better Auth Internal Dynamic Routes
-app.all("/api/auth/*path", toNodeHandler(auth));
-
-// 2. Global Middleware Rules
+// 1. Global Middleware Rules
 app.use(
   cors({
     origin: process.env.CLIENT_URL,
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   }),
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// 2. Better Auth Internal Dynamic Routes
+app.all("/api/auth/*path", toNodeHandler(auth));
 
 // 3. Base Health Check Route
 app.get("/", (req, res) => {
