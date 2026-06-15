@@ -13,7 +13,7 @@ export interface UpdateTutorData {
   bio?: string;
   qualifications?: string;
   skills?: string[];
-  experience?: number;
+  experienceYears?: number;
   pricePerHour?: number;
   categories?: string[];
 }

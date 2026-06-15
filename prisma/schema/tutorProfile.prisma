@@ -3,12 +3,14 @@ model TutorProfile {
     userId           String         @unique
     user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
     title            String?
+    isVerified       Boolean        @default(false)
     bio              String?
     qualifications   String?
     skills           String[] // Array of subjects they teach (e.g., ["JavaScript", "Node.js"])
-    experience       Int            @default(0) // Years of teaching experience
+    experienceYears  Int            @default(0) // Years of teaching experience
     pricePerHour     Float          @default(0.0)
     rating           Float          @default(0.0)
+    reviewCount      Int            @default(0)
     totalHoursTaught Int            @default(0)
     categories       Category[]
     availabilities   Availability[]

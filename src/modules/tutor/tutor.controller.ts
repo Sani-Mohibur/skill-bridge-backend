@@ -25,10 +25,6 @@ const searchTutors = catchAsync(
       minRating: minRating as string | undefined,
     });
 
-    if (!data || data.length === 0) {
-      throw new ApiError(404, "No tutors found matching your search criteria.");
-    }
-
     sendResponse(res, {
       statusCode: 200,
       success: true,
@@ -38,6 +34,20 @@ const searchTutors = catchAsync(
   },
 );
 
+const getAllCategories = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
+    const data = await tutorService.getAllCategories();
+
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Categories retrieved successfully.",
+      data: data,
+    });
+  },
+);
+
 export const tutorController = {
   searchTutors,
+  getAllCategories,
 };

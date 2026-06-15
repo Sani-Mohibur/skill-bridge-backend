@@ -15,7 +15,7 @@ const searchTutors = async (filters: TutorFilterQuery) => {
   if (minPrice) priceCondition.gte = parseFloat(minPrice);
   if (maxPrice) priceCondition.lte = parseFloat(maxPrice);
 
-  return await prisma.tutorProfile.findMany({
+  const tutorsData = await prisma.tutorProfile.findMany({
     where: {
       AND:
         categories && categories.length > 0
@@ -43,8 +43,26 @@ const searchTutors = async (filters: TutorFilterQuery) => {
     },
     orderBy: { rating: "desc" },
   });
+  return tutorsData.map((tutor) => ({
+    ...tutor,
+    name: tutor.user?.name || "Unknown Mentor", // Fallback name mapping if needed
+    categories: tutor.categories.map((cat) => cat.name), // Converts [{ name: "Node.js" }] -> ["Node.js"]
+  }));
+};
+
+const getAllCategories = async () => {
+  return await prisma.category.findMany({
+    select: {
+      id: true,
+      name: true,
+    },
+    orderBy: {
+      name: "asc", // Alphabetical order for clean UI presentation
+    },
+  });
 };
 
 export const tutorService = {
   searchTutors,
+  getAllCategories,
 };

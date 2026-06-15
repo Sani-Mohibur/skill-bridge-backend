@@ -5,5 +5,6 @@ const tutorRouter = Router();
 
 // Public endpoint
 tutorRouter.get("/search", tutorController.searchTutors);
+tutorRouter.get("/categories", tutorController.getAllCategories);
 
 export default tutorRouter;
