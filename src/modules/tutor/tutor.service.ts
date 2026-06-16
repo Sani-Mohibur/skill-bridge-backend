@@ -1,4 +1,8 @@
 import { prisma } from "../../lib/prisma.js";
+import {
+  paginationHelper,
+  PaginationOptions,
+} from "../../utils/paginationHelper.js";
 
 interface TutorFilterQuery {
   search?: string;
@@ -8,46 +12,82 @@ interface TutorFilterQuery {
   minRating?: string;
 }
 
-const searchTutors = async (filters: TutorFilterQuery) => {
+const searchTutors = async (
+  filters: TutorFilterQuery,
+  options: PaginationOptions,
+) => {
   const { search, categories, minPrice, maxPrice, minRating } = filters;
+
+  // 1. Compute pagination variables (skip, limit, order)
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelper.calculatePagination(options);
 
   const priceCondition: { gte?: number; lte?: number } = {};
   if (minPrice) priceCondition.gte = parseFloat(minPrice);
   if (maxPrice) priceCondition.lte = parseFloat(maxPrice);
 
-  const tutorsData = await prisma.tutorProfile.findMany({
-    where: {
-      AND:
-        categories && categories.length > 0
-          ? categories.map((catId) => ({
-              categories: {
-                some: { id: catId },
+  // 2. Build the centralized database filtering conditions matrix
+  const whereConditions = {
+    AND:
+      categories && categories.length > 0
+        ? categories.map((categoryName) => ({
+            categories: {
+              some: {
+                name: {
+                  equals: categoryName,
+                  mode: "insensitive" as const, // Makes category string matching bulletproof against case drift
+                },
               },
-            }))
-          : undefined,
-
-      pricePerHour: minPrice || maxPrice ? priceCondition : undefined,
-      rating: minRating ? { gte: parseFloat(minRating) } : undefined,
-      user: search
-        ? {
-            name: {
-              contains: search,
-              mode: "insensitive",
             },
-          }
+          }))
         : undefined,
-    },
-    include: {
-      user: { select: { name: true, email: true } },
-      categories: { select: { name: true } },
-    },
-    orderBy: { rating: "desc" },
-  });
-  return tutorsData.map((tutor) => ({
+
+    pricePerHour: minPrice || maxPrice ? priceCondition : undefined,
+    rating: minRating ? { gte: parseFloat(minRating) } : undefined,
+    user: search
+      ? {
+          name: {
+            contains: search,
+            mode: "insensitive" as const,
+          },
+        }
+      : undefined,
+  };
+
+  // 3. Query records with boundaries and count matches in parallel
+  const [tutorsData, totalMatches] = await Promise.all([
+    prisma.tutorProfile.findMany({
+      where: whereConditions,
+      include: {
+        user: { select: { name: true, email: true } },
+        categories: { select: { name: true } },
+      },
+      orderBy: { [sortBy]: sortOrder },
+      skip,
+      take: limit,
+    }),
+    prisma.tutorProfile.count({ where: whereConditions }),
+  ]);
+
+  const totalPage = Math.ceil(totalMatches / limit);
+
+  // 4. Map records cleanly to match your frontend data expectations
+  const formattedTutors = tutorsData.map((tutor) => ({
     ...tutor,
-    name: tutor.user?.name || "Unknown Mentor", // Fallback name mapping if needed
-    categories: tutor.categories.map((cat) => cat.name), // Converts [{ name: "Node.js" }] -> ["Node.js"]
+    name: tutor.user?.name || "Unknown Mentor",
+    categories: tutor.categories.map((cat) => cat.name),
   }));
+
+  // 5. Return meta data and matching rows payload
+  return {
+    meta: {
+      page,
+      limit,
+      total: totalMatches,
+      totalPage,
+    },
+    data: formattedTutors,
+  };
 };
 
 const getAllCategories = async () => {
