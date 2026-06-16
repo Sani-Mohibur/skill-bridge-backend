@@ -43,14 +43,16 @@ const add = async ({
     const aggregations = await tx.review.aggregate({
       where: { tutorProfileId: booking.tutorProfileId },
       _avg: { rating: true },
+      _count: { id: true },
     });
 
     const newAverageRating = aggregations._avg.rating || 0;
+    const totalReviewsCount = aggregations._count.id || 0;
 
     // Update the tutor's profile with the new rating
     await tx.tutorProfile.update({
       where: { id: booking.tutorProfileId },
-      data: { rating: newAverageRating },
+      data: { rating: newAverageRating, reviewCount: totalReviewsCount },
     });
 
     return newReview;

@@ -47,7 +47,26 @@ const getAllCategories = catchAsync(
   },
 );
 
+const getTutorById = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+    const data = await tutorService.getTutorById(id as string);
+
+    if (!data) {
+      throw new ApiError(404, "Tutor profile not found.");
+    }
+
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Tutor profile retrieved successfully.",
+      data: data,
+    });
+  },
+);
+
 export const tutorController = {
   searchTutors,
   getAllCategories,
+  getTutorById,
 };

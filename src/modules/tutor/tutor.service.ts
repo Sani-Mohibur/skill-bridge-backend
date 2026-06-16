@@ -62,7 +62,47 @@ const getAllCategories = async () => {
   });
 };
 
+const getTutorById = async (id: string) => {
+  const tutor = await prisma.tutorProfile.findUnique({
+    where: { id },
+    include: {
+      user: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+      categories: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      reviews: {
+        include: {
+          studentProfile: {
+            include: {
+              user: { select: { name: true } },
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      },
+    },
+  });
+
+  if (!tutor) return null;
+
+  // Flattening the categories list data to maintain clean string array interface shape
+  return {
+    ...tutor,
+    name: tutor.user?.name || "Unknown Mentor",
+    categories: tutor.categories.map((cat) => cat.name),
+  };
+};
+
 export const tutorService = {
   searchTutors,
   getAllCategories,
+  getTutorById,
 };
