@@ -14,7 +14,8 @@ interface AuthenticatedRequest extends Request {
 
 const addAvailabilitySlot = catchAsync(
   async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    const { slot } = req.body;
+    // Destructure the new optional fields alongside the required slot timestamp
+    const { slot, title, subject, details, location, timeDuration } = req.body;
 
     if (!slot) {
       throw new ApiError(400, "A valid date-time slot string is required.");
@@ -23,6 +24,11 @@ const addAvailabilitySlot = catchAsync(
     const data = await availabilityService.createAvailabilityService({
       userId: req.user!.id,
       slot,
+      title,
+      subject,
+      details,
+      location,
+      timeDuration,
     });
 
     res.status(201).json({

@@ -1,11 +1,13 @@
 import { prisma } from "../../lib/prisma.js";
 
 const bookSlotService = async (userId: string, availabilityId: string) => {
-  // 1. Ensure the availability slot actually exists
+  // 1. Ensure the availability slot actually exists and is not already booked
   const slot = await prisma.availability.findUnique({
     where: { id: availabilityId },
   });
   if (!slot) throw new Error("The requested tutor slot does not exist.");
+  if (slot.isBooked)
+    throw new Error("This session slot has already been claimed.");
 
   // 2. Fetch the student's internal profile ID
   const studentProfile = await prisma.studentProfile.findUnique({
@@ -23,14 +25,21 @@ const bookSlotService = async (userId: string, availabilityId: string) => {
   });
   if (existingBooking) throw new Error("You have already joined this session.");
 
-  // 4. Register the student
-  return await prisma.booking.create({
-    data: {
-      studentProfileId: studentProfile.id,
-      availabilityId,
-      tutorProfileId: slot.tutorProfileId,
-      status: "pending", // Stays pending until tutor completes it
-    },
+  // 4. Register the student and flip the isBooked flag inside a transaction
+  return await prisma.$transaction(async (tx) => {
+    await tx.availability.update({
+      where: { id: availabilityId },
+      data: { isBooked: true },
+    });
+
+    return await tx.booking.create({
+      data: {
+        studentProfileId: studentProfile.id,
+        availabilityId,
+        tutorProfileId: slot.tutorProfileId,
+        status: "pending",
+      },
+    });
   });
 };
 
@@ -94,6 +103,7 @@ const getStudentBookingsService = async (userId: string) => {
   return await prisma.booking.findMany({
     where: { studentProfileId: studentProfile.id },
     include: {
+      review: true,
       availability: {
         include: {
           tutorProfile: {

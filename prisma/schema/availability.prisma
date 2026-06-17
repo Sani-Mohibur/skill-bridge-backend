@@ -2,7 +2,12 @@ model Availability {
     id             String       @id @default(uuid())
     tutorProfileId String
     tutorProfile   TutorProfile @relation(fields: [tutorProfileId], references: [id], onDelete: Cascade)
+    title          String? // Added: e.g., "Advanced System Design Mastering"
+    subject        String? // Added: e.g., "Backend Engineering"
+    details        String?
+    location       String?
     slot           DateTime
+    timeDuration   String?
     isBooked       Boolean      @default(false)
     bookings       Booking[]
 

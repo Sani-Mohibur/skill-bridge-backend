@@ -3,9 +3,22 @@ import { prisma } from "../../lib/prisma";
 interface CreateSlotData {
   userId: string;
   slot: string; // ISO Date String from request body
+  title?: string;
+  subject?: string;
+  details?: string;
+  location?: string;
+  timeDuration?: string;
 }
 
-const createAvailabilityService = async ({ userId, slot }: CreateSlotData) => {
+const createAvailabilityService = async ({
+  userId,
+  slot,
+  title,
+  subject,
+  details,
+  location,
+  timeDuration,
+}: CreateSlotData) => {
   // 1. Find the TutorProfile connected to the logged-in User ID
   const tutorProfile = await prisma.tutorProfile.findUnique({
     where: { userId },
@@ -15,12 +28,17 @@ const createAvailabilityService = async ({ userId, slot }: CreateSlotData) => {
     throw new Error("Tutor profile not found for this account.");
   }
 
-  // 2. Insert the open availability slot record
+  // 2. Insert the open availability slot record with new optional metadata
   const newSlot = await prisma.availability.create({
     data: {
       tutorProfileId: tutorProfile.id,
       slot: new Date(slot),
       isBooked: false,
+      title,
+      subject,
+      details,
+      location,
+      timeDuration,
     },
   });
 
