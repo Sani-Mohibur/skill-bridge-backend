@@ -173,6 +173,55 @@ const getSlotStudentsService = async (
   });
 };
 
+const getStudentStatsService = async (userId: string) => {
+  // 1. Fetch the student's internal profile ID
+  const studentProfile = await prisma.studentProfile.findUnique({
+    where: { userId },
+  });
+  if (!studentProfile)
+    throw new Error("Student profile configuration missing.");
+
+  // 2. Query only completed bookings along with slot specifications and tutor rates
+  const completedBookings = await prisma.booking.findMany({
+    where: {
+      studentProfileId: studentProfile.id,
+      status: "completed",
+    },
+    include: {
+      availability: {
+        select: {
+          timeDuration: true,
+          tutorProfile: {
+            select: {
+              pricePerHour: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  // 3. Compute stats metrics down via reduction
+  let totalMinutes = 0;
+  let totalCost = 0;
+
+  completedBookings.forEach((b) => {
+    const duration = b.availability?.timeDuration
+      ? parseInt(b.availability.timeDuration, 10)
+      : 60;
+    const rate = b.availability?.tutorProfile?.pricePerHour || 0;
+
+    totalMinutes += duration;
+    totalCost += rate * (duration / 60);
+  });
+
+  return {
+    totalHours: Number((totalMinutes / 60).toFixed(1)),
+    totalCompleteSessions: completedBookings.length,
+    totalCost: Number(totalCost.toFixed(2)),
+  };
+};
+
 export const bookingService = {
   bookSlotService,
   cancelBookingService,
@@ -180,4 +229,5 @@ export const bookingService = {
   getStudentBookingsService,
   getTutorBookingsService,
   getSlotStudentsService,
+  getStudentStatsService,
 };

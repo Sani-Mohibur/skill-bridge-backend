@@ -87,6 +87,18 @@ const getSlotStudents = catchAsync(
   },
 );
 
+const getStudentStats = catchAsync(
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const data = await bookingService.getStudentStatsService(req.user!.id);
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Student dashboard stats retrieved successfully.",
+      data,
+    });
+  },
+);
+
 export const bookingController = {
   bookSlot,
   cancelBooking,
@@ -94,4 +106,5 @@ export const bookingController = {
   getStudentBookings,
   getTutorBookings,
   getSlotStudents,
+  getStudentStats,
 };

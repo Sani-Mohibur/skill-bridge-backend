@@ -21,6 +21,11 @@ bookingRouter.get(
   requireAuth([USER_ROLES.STUDENT]),
   bookingController.getStudentBookings,
 );
+bookingRouter.get(
+  "/student-stats",
+  requireAuth([USER_ROLES.STUDENT]),
+  bookingController.getStudentStats,
+);
 
 // 2. Tutors Only: Class completion
 bookingRouter.post(
