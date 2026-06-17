@@ -7,6 +7,10 @@ const availabilityRouter = Router();
 
 // 1. Public/Student - View all open slots
 availabilityRouter.get("/", availabilityController.getAllAvailabilities);
+availabilityRouter.get(
+  "/upcoming",
+  availabilityController.getAllUpcomingAvailabilities,
+);
 
 // 2. Tutor Only - Manage slots
 availabilityRouter.post(

@@ -64,6 +64,28 @@ const getAllAvailabilitiesService = async (tutorProfileId?: string) => {
   });
 };
 
+const getAllUpcomingAvailabilitiesService = async (tutorProfileId?: string) => {
+  return await prisma.availability.findMany({
+    where: {
+      isBooked: false,
+      slot: {
+        gt: new Date(), // Filters for slots strictly in the future
+      },
+      ...(tutorProfileId ? { tutorProfileId } : {}),
+    },
+    include: {
+      tutorProfile: {
+        include: {
+          user: {
+            select: { name: true, email: true },
+          },
+        },
+      },
+    },
+    orderBy: { slot: "asc" },
+  });
+};
+
 const getTutorAvailabilitiesService = async (userId: string) => {
   const tutorProfile = await prisma.tutorProfile.findUnique({
     where: { userId },
@@ -122,4 +144,5 @@ export const availabilityService = {
   getTutorAvailabilitiesService,
   updateAvailabilityService,
   deleteAvailabilityService,
+  getAllUpcomingAvailabilitiesService,
 };

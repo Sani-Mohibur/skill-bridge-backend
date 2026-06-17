@@ -50,6 +50,17 @@ const getAllAvailabilities = catchAsync(
   },
 );
 
+const getAllUpcomingAvailabilities = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
+    const { tutorId } = req.query;
+    const data = await availabilityService.getAllUpcomingAvailabilitiesService(
+      tutorId as string,
+    );
+
+    res.status(200).json({ success: true, data });
+  },
+);
+
 const getTutorAvailabilities = catchAsync(
   async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const data = await availabilityService.getTutorAvailabilitiesService(
@@ -102,4 +113,5 @@ export const availabilityController = {
   getTutorAvailabilities,
   updateAvailabilitySlot,
   deleteAvailabilitySlot,
+  getAllUpcomingAvailabilities,
 };
