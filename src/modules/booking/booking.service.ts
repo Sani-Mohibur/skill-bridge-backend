@@ -60,7 +60,15 @@ const cancelBookingService = async (userId: string, bookingId: string) => {
     );
   }
 
-  return await prisma.booking.delete({ where: { id: bookingId } });
+  // Atomically free up the availability slot and delete the booking registration
+  return await prisma.$transaction(async (tx) => {
+    await tx.availability.update({
+      where: { id: booking.availabilityId },
+      data: { isBooked: false },
+    });
+
+    return await prisma.booking.delete({ where: { id: bookingId } });
+  });
 };
 
 const completeBookingService = async (
