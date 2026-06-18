@@ -27,7 +27,7 @@ bookingRouter.get(
   bookingController.getStudentStats,
 );
 
-// 2. Tutors Only: Class completion
+// 2. Tutors Only
 bookingRouter.post(
   "/complete",
   requireAuth([USER_ROLES.TUTOR]),

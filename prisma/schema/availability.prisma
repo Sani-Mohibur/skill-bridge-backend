@@ -9,6 +9,7 @@ model Availability {
     slot           DateTime
     timeDuration   String? // "120" 
     pricePerHour   Float?
+    status         String       @default("pending")
     isBooked       Boolean      @default(false)
     bookings       Booking[]
 

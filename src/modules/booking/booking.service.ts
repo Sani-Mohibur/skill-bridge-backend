@@ -95,8 +95,14 @@ const completeBookingService = async (
   }
 
   // Bulk update all student registrations assigned to this specific slot
-  return await prisma.booking.updateMany({
+  await prisma.booking.updateMany({
     where: { availabilityId },
+    data: { status: "completed" },
+  });
+
+  // Update the parent availability slot global status configuration mapping
+  return await prisma.availability.update({
+    where: { id: availabilityId },
     data: { status: "completed" },
   });
 };
