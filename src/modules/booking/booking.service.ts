@@ -191,11 +191,7 @@ const getStudentStatsService = async (userId: string) => {
       availability: {
         select: {
           timeDuration: true,
-          tutorProfile: {
-            select: {
-              pricePerHour: true,
-            },
-          },
+          pricePerHour: true,
         },
       },
     },
@@ -209,7 +205,7 @@ const getStudentStatsService = async (userId: string) => {
     const duration = b.availability?.timeDuration
       ? parseInt(b.availability.timeDuration, 10)
       : 60;
-    const rate = b.availability?.tutorProfile?.pricePerHour || 0;
+    const rate = b.availability?.pricePerHour || 0;
 
     totalMinutes += duration;
     totalCost += rate * (duration / 60);

@@ -15,7 +15,15 @@ interface AuthenticatedRequest extends Request {
 const addAvailabilitySlot = catchAsync(
   async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     // Destructure the new optional fields alongside the required slot timestamp
-    const { slot, title, subject, details, location, timeDuration } = req.body;
+    const {
+      slot,
+      title,
+      subject,
+      details,
+      location,
+      timeDuration,
+      pricePerHour,
+    } = req.body;
 
     if (!slot) {
       throw new ApiError(400, "A valid date-time slot string is required.");
@@ -29,6 +37,7 @@ const addAvailabilitySlot = catchAsync(
       details,
       location,
       timeDuration,
+      pricePerHour,
     });
 
     res.status(201).json({

@@ -8,6 +8,7 @@ model Availability {
     location       String?
     slot           DateTime
     timeDuration   String?
+    pricePerHour   Float?
     isBooked       Boolean      @default(false)
     bookings       Booking[]
 

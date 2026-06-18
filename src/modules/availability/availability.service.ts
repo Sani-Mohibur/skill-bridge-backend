@@ -8,6 +8,7 @@ interface CreateSlotData {
   details?: string;
   location?: string;
   timeDuration?: string;
+  pricePerHour?: string;
 }
 
 const createAvailabilityService = async ({
@@ -18,6 +19,7 @@ const createAvailabilityService = async ({
   details,
   location,
   timeDuration,
+  pricePerHour,
 }: CreateSlotData) => {
   // 1. Find the TutorProfile connected to the logged-in User ID
   const tutorProfile = await prisma.tutorProfile.findUnique({
@@ -39,6 +41,7 @@ const createAvailabilityService = async ({
       details,
       location,
       timeDuration,
+      pricePerHour,
     },
   });
 
