@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { profileService } from "./profile.service.js";
 import { USER_ROLES } from "../../constants/user.constants.js";
 import catchAsync from "../../utils/catchAsync.js";
+import sendResponse from "../../utils/sendResponse.js";
 
 interface AuthenticatedRequest extends Request {
   user?: { id: string; role: string; email: string; name: string };
@@ -27,9 +28,12 @@ const updateMyProfile = catchAsync(
         ? await profileService.updateStudent(id, req.body)
         : await profileService.updateTutor(id, req.body);
 
-    res
-      .status(200)
-      .json({ success: true, message: "Profile updated successfully.", data });
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Profile updated successfully.",
+      data,
+    });
   },
 );
 

@@ -21,6 +21,8 @@ export const globalErrorHandler = (
     message = err.message;
   }
 
+  console.error("❌ Backend Error Context:", err);
+
   res.status(statusCode).json({
     success: false,
     message,

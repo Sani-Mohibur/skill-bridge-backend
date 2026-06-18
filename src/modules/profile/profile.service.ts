@@ -20,7 +20,7 @@ const getTutor = async (userId: string) => {
     where: { userId },
     include: {
       user: { select: { name: true, email: true, role: true } },
-      category: { select: { name: true } },
+      categories: { select: { id: true, name: true } },
     },
   });
 };
