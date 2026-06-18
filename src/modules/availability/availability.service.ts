@@ -8,7 +8,7 @@ interface CreateSlotData {
   details?: string;
   location?: string;
   timeDuration?: string;
-  pricePerHour?: string;
+  pricePerHour?: number;
 }
 
 const createAvailabilityService = async ({
@@ -105,7 +105,7 @@ const getTutorAvailabilitiesService = async (userId: string) => {
 const updateAvailabilityService = async (
   id: string,
   userId: string,
-  slot: string,
+  payload: { slot?: string; details?: string; location?: string },
 ) => {
   const tutorProfile = await prisma.tutorProfile.findUnique({
     where: { userId },
@@ -119,9 +119,15 @@ const updateAvailabilityService = async (
   if (availability.isBooked)
     throw new Error("Cannot update an already booked slot.");
 
+  // Build the dynamic update data object safely
+  const updateData: any = {};
+  if (payload.slot) updateData.slot = new Date(payload.slot);
+  if (payload.details !== undefined) updateData.details = payload.details;
+  if (payload.location !== undefined) updateData.location = payload.location;
+
   return await prisma.availability.update({
     where: { id },
-    data: { slot: new Date(slot) },
+    data: updateData,
   });
 };
 

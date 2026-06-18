@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { availabilityService } from "./availability.service.js";
 import catchAsync from "../../utils/catchAsync.js";
 import ApiError from "../../errors/ApiError.js";
+import sendResponse from "../../utils/sendResponse.js";
 
 interface AuthenticatedRequest extends Request {
   user?: {
@@ -83,21 +84,27 @@ const getTutorAvailabilities = catchAsync(
 const updateAvailabilitySlot = catchAsync(
   async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const { id } = req.params;
-    const { slot } = req.body;
+    const { slot, details, location } = req.body;
 
-    if (!slot) {
-      throw new ApiError(400, "Slot date is required.");
+    if (!slot && details === undefined && location === undefined) {
+      throw new ApiError(
+        400,
+        "At least one field (slot, details, or location) must be provided.",
+      );
     }
 
     const data = await availabilityService.updateAvailabilityService(
       id as string,
       req.user!.id,
-      slot,
+      { slot, details, location },
     );
 
-    res
-      .status(200)
-      .json({ success: true, message: "Slot updated successfully.", data });
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Slot updated successfully.",
+      data,
+    });
   },
 );
 

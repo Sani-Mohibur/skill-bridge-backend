@@ -5,7 +5,7 @@ import { USER_ROLES } from "../../constants/user.constants.js";
 
 const availabilityRouter = Router();
 
-// 1. Public/Student - View all open slots
+// 1. Public
 availabilityRouter.get("/", availabilityController.getAllAvailabilities);
 availabilityRouter.get(
   "/upcoming",
