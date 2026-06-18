@@ -59,12 +59,27 @@ const add = async ({
   });
 };
 
-const getByTutor = async (tutorProfileId: string) => {
+export const getByTutor = async (tutorProfileId: string) => {
   return await prisma.review.findMany({
     where: { tutorProfileId },
     include: {
       studentProfile: {
-        include: { user: { select: { name: true } } },
+        include: {
+          user: {
+            select: { name: true },
+          },
+        },
+      },
+      // Deeply including booking and availability details
+      booking: {
+        include: {
+          availability: {
+            select: {
+              title: true,
+              subject: true,
+            },
+          },
+        },
       },
     },
     orderBy: { createdAt: "desc" },
