@@ -66,9 +66,40 @@ const deleteCategory = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const toggleTutorFeatured = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params; // tutorProfileId
+    const { isFeatured } = req.body;
+
+    if (typeof isFeatured !== "boolean") {
+      throw new ApiError(
+        400,
+        "The 'isFeatured' field must be a boolean value.",
+      );
+    }
+
+    const data = await adminService.updateTutorFeaturedStatus(
+      id as string,
+      isFeatured,
+    );
+
+    const message = isFeatured
+      ? "Tutor has been featured successfully."
+      : "Tutor has been removed from featured list.";
+
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message,
+      data,
+    });
+  },
+);
+
 export const adminController = {
   getDashboardStats,
   toggleUserBan,
   createCategory,
   deleteCategory,
+  toggleTutorFeatured,
 };

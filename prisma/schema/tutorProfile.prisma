@@ -4,6 +4,7 @@ model TutorProfile {
     user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
     title            String?
     isVerified       Boolean        @default(false)
+    isFeatured       Boolean        @default(false)
     bio              String?
     qualifications   String?
     skills           String[] // Array of subjects they teach (e.g., ["JavaScript", "Node.js"])

@@ -62,9 +62,37 @@ const deleteCategory = async (id: string) => {
   });
 };
 
+const updateTutorFeaturedStatus = async (
+  tutorProfileId: string,
+  isFeatured: boolean,
+) => {
+  const tutor = await prisma.tutorProfile.findUnique({
+    where: { id: tutorProfileId },
+  });
+
+  if (!tutor) {
+    throw new ApiError(404, "Tutor profile not found.");
+  }
+
+  return await prisma.tutorProfile.update({
+    where: { id: tutorProfileId },
+    data: { isFeatured },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
+  });
+};
+
 export const adminService = {
   getDashboardStats,
   updateUserBanStatus,
   createCategory,
   deleteCategory,
+  updateTutorFeaturedStatus,
 };
