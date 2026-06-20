@@ -96,10 +96,25 @@ const toggleTutorFeatured = catchAsync(
   },
 );
 
+const getAllUsers = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
+    const result = await adminService.getAllUsers(req.query);
+
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "User account records fetched successfully.",
+      meta: result.meta,
+      data: result.data,
+    });
+  },
+);
+
 export const adminController = {
   getDashboardStats,
   toggleUserBan,
   createCategory,
   deleteCategory,
   toggleTutorFeatured,
+  getAllUsers,
 };

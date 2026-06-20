@@ -1,10 +1,10 @@
 import { Response } from "express";
 
 type IMeta = {
-  page: number;
-  limit: number;
-  total: number;
-  totalPage: number;
+  page?: number;
+  limit?: number;
+  total?: number;
+  totalPage?: number;
 };
 
 type ApiResponse<T> = {

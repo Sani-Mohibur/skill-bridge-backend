@@ -13,5 +13,6 @@ adminRouter.patch("/users/:userId/ban", adminController.toggleUserBan);
 adminRouter.post("/categories", adminController.createCategory);
 adminRouter.delete("/categories/:id", adminController.deleteCategory);
 adminRouter.patch("/tutors/:id/featured", adminController.toggleTutorFeatured);
+adminRouter.get("/users", adminController.getAllUsers);
 
 export default adminRouter;
