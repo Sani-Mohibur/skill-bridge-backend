@@ -14,6 +14,13 @@ export const auth = betterAuth({
   },
 
   trustedOrigins: [process.env.CLIENT_URL!],
+  advanced: {
+    useSecureCookies: true,
+  },
+  cookie: {
+    secure: true,
+    sameSite: "none",
+  },
 
   user: {
     additionalFields: {
