@@ -7,7 +7,13 @@ import sendResponse from "../../utils/sendResponse.js";
 const getDashboardStats = catchAsync(
   async (req: Request, res: Response): Promise<void> => {
     const data = await adminService.getDashboardStats();
-    res.status(200).json({ success: true, data });
+
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Administrative summary metrics aggregated successfully.",
+      data,
+    });
   },
 );
 
@@ -110,6 +116,78 @@ const getAllUsers = catchAsync(
   },
 );
 
+const getAllTutors = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
+    const result = await adminService.getAllTutors(req.query);
+
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Tutor directory records fetched successfully.",
+      meta: result.meta,
+      data: result.data,
+    });
+  },
+);
+
+const toggleTutorVerification = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params; // tutorProfileId
+    const { isVerified } = req.body;
+
+    if (typeof isVerified !== "boolean") {
+      throw new ApiError(
+        400,
+        "The 'isVerified' field must be a boolean value.",
+      );
+    }
+
+    const data = await adminService.updateTutorVerificationStatus(
+      id as string,
+      isVerified,
+    );
+
+    const message = isVerified
+      ? "Tutor has been verified successfully."
+      : "Tutor verification status revoked.";
+
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message,
+      data,
+    });
+  },
+);
+
+const getAllBookings = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
+    const result = await adminService.getAllBookings(req.query);
+
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Booking audit logs retrieved successfully.",
+      meta: result.meta,
+      data: result.data,
+    });
+  },
+);
+
+const getAllAvailabilities = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
+    const result = await adminService.getAllAvailabilities(req.query);
+
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Master availability schedules retrieved successfully.",
+      meta: result.meta,
+      data: result.data,
+    });
+  },
+);
+
 export const adminController = {
   getDashboardStats,
   toggleUserBan,
@@ -117,4 +195,8 @@ export const adminController = {
   deleteCategory,
   toggleTutorFeatured,
   getAllUsers,
+  getAllTutors,
+  toggleTutorVerification,
+  getAllBookings,
+  getAllAvailabilities,
 };
