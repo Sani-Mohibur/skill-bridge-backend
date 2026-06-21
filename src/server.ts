@@ -1,7 +1,7 @@
 import http from "http";
-import app from "./app";
+import app from "./app.js";
 import dotenv from "dotenv";
-import { prisma } from "./lib/prisma";
+import { prisma } from "./lib/prisma.js";
 
 // Load local environmental variables
 dotenv.config();

@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { prisma } from "./prisma";
-import { USER_ROLES } from "../constants/user.constants";
+import { prisma } from "./prisma.js";
+import { USER_ROLES } from "../constants/user.constants.js";
 import { APIError, createAuthMiddleware } from "better-auth/api";
 
 export const auth = betterAuth({
