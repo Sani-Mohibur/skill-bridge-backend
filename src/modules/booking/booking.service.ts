@@ -2,13 +2,11 @@
 import { prisma } from "../../lib/prisma.js";
 
 const bookSlotService = async (userId: string, availabilityId: string) => {
-  // 1. Ensure the availability slot actually exists and is not already booked
+  // 1. Ensure the availability slot actually exists
   const slot = await prisma.availability.findUnique({
     where: { id: availabilityId },
   });
   if (!slot) throw new Error("The requested tutor slot does not exist.");
-  if (slot.isBooked)
-    throw new Error("This session slot has already been claimed.");
 
   // 2. Fetch the student's internal profile ID
   const studentProfile = await prisma.studentProfile.findUnique({
