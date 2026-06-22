@@ -106,7 +106,7 @@ const getUpcomingAvailabilitiesService = async (
       slot: { gt: new Date() }, // Future slots only
       ...(tutorProfileId ? { tutorProfileId } : {}),
       // The magic filter: hides the slot if this student's ID is in the booking list
-      booking: {
+      bookings: {
         none: {
           studentProfileId: studentProfile.id,
         },
