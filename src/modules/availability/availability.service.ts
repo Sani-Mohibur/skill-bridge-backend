@@ -88,6 +88,39 @@ const getAllUpcomingAvailabilitiesService = async (tutorProfileId?: string) => {
   });
 };
 
+// Student shows available slot he didn't book
+const getUpcomingAvailabilitiesService = async (
+  userId: string,
+  tutorProfileId?: string,
+) => {
+  // 1. Fetch the student's internal profile ID
+  const studentProfile = await prisma.studentProfile.findUnique({
+    where: { userId },
+    select: { id: true },
+  });
+  if (!studentProfile) throw new Error("Student profile missing.");
+
+  // 2. Fetch future slots excluding ones the student already booked
+  return await prisma.availability.findMany({
+    where: {
+      slot: { gt: new Date() }, // Future slots only
+      ...(tutorProfileId ? { tutorProfileId } : {}),
+      // The magic filter: hides the slot if this student's ID is in the booking list
+      booking: {
+        none: {
+          studentProfileId: studentProfile.id,
+        },
+      },
+    },
+    include: {
+      tutorProfile: {
+        include: { user: { select: { name: true, email: true } } },
+      },
+    },
+    orderBy: { slot: "asc" },
+  });
+};
+
 const getTutorAvailabilitiesService = async (userId: string) => {
   const tutorProfile = await prisma.tutorProfile.findUnique({
     where: { userId },
@@ -153,4 +186,5 @@ export const availabilityService = {
   updateAvailabilityService,
   deleteAvailabilityService,
   getAllUpcomingAvailabilitiesService,
+  getUpcomingAvailabilitiesService,
 };

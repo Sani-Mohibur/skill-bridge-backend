@@ -71,6 +71,25 @@ const getAllUpcomingAvailabilities = catchAsync(
   },
 );
 
+// Student shows available slot he didn't book
+const getUpcomingAvailabilities = catchAsync(
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const { tutorId } = req.query;
+
+    const data = await availabilityService.getUpcomingAvailabilitiesService(
+      req.user!.id,
+      tutorId as string,
+    );
+
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Upcoming available slots retrieved successfully.",
+      data,
+    });
+  },
+);
+
 const getTutorAvailabilities = catchAsync(
   async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const data = await availabilityService.getTutorAvailabilitiesService(
@@ -130,4 +149,5 @@ export const availabilityController = {
   updateAvailabilitySlot,
   deleteAvailabilitySlot,
   getAllUpcomingAvailabilities,
+  getUpcomingAvailabilities,
 };

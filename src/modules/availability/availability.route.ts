@@ -34,4 +34,11 @@ availabilityRouter.delete(
   availabilityController.deleteAvailabilitySlot,
 );
 
+// 3. Students
+availabilityRouter.get(
+  "/student-upcoming",
+  requireAuth([USER_ROLES.STUDENT]),
+  availabilityController.getUpcomingAvailabilities,
+);
+
 export default availabilityRouter;
