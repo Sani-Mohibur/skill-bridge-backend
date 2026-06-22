@@ -1,4 +1,3 @@
-import { connect } from "node:http2";
 import { prisma } from "../../lib/prisma.js";
 
 interface CreateReviewData {
@@ -27,7 +26,7 @@ const add = async ({
   if (!booking) throw new Error("No completed booking found to review.");
 
   // Execute review creation and rating recalculation in a transaction
-  return await prisma.$transaction(async (tx) => {
+  return await prisma.$transaction(async (tx: any) => {
     // Save the new review
     const newReview = await tx.review.create({
       data: {

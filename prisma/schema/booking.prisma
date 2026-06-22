@@ -10,5 +10,9 @@ model Booking {
     review           Review?
     createdAt        DateTime       @default(now())
 
+    amount                  Float?
+    currency                String?
+    stripeCheckoutSessionId String? @unique
+
     @@map("booking")
 }

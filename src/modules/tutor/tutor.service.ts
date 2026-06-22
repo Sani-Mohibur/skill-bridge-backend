@@ -72,10 +72,10 @@ const searchTutors = async (
   const totalPage = Math.ceil(totalMatches / limit);
 
   // 4. Map records cleanly to match your frontend data expectations
-  const formattedTutors = tutorsData.map((tutor) => ({
+  const formattedTutors = tutorsData.map((tutor: any) => ({
     ...tutor,
     name: tutor.user?.name || "Unknown Mentor",
-    categories: tutor.categories.map((cat) => cat.name),
+    categories: tutor.categories.map((cat: any) => cat.name),
   }));
 
   // 5. Return meta data and matching rows payload
@@ -137,7 +137,7 @@ const getTutorById = async (id: string) => {
   return {
     ...tutor,
     name: tutor.user?.name || "Unknown Mentor",
-    categories: tutor.categories.map((cat) => cat.name),
+    categories: tutor.categories.map((cat: any) => cat.name),
   };
 };
 
