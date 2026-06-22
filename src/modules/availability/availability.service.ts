@@ -70,7 +70,6 @@ const getAllAvailabilitiesService = async (tutorProfileId?: string) => {
 const getAllUpcomingAvailabilitiesService = async (tutorProfileId?: string) => {
   return await prisma.availability.findMany({
     where: {
-      isBooked: false,
       slot: {
         gt: new Date(), // Filters for slots strictly in the future
       },

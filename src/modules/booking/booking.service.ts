@@ -1,3 +1,4 @@
+import { Prisma } from "../../../generated/prisma/client.js";
 import { prisma } from "../../lib/prisma.js";
 
 const bookSlotService = async (userId: string, availabilityId: string) => {
@@ -26,7 +27,7 @@ const bookSlotService = async (userId: string, availabilityId: string) => {
   if (existingBooking) throw new Error("You have already joined this session.");
 
   // 4. Register the student and flip the isBooked flag inside a transaction
-  return await prisma.$transaction(async (tx) => {
+  return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     await tx.availability.update({
       where: { id: availabilityId },
       data: { isBooked: true },
@@ -61,7 +62,7 @@ const cancelBookingService = async (userId: string, bookingId: string) => {
   }
 
   // Atomically free up the availability slot and delete the booking registration
-  return await prisma.$transaction(async (tx) => {
+  return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     await tx.availability.update({
       where: { id: booking.availabilityId },
       data: { isBooked: false },
@@ -207,7 +208,7 @@ const getStudentStatsService = async (userId: string) => {
   let totalMinutes = 0;
   let totalCost = 0;
 
-  completedBookings.forEach((b) => {
+  completedBookings.forEach((b: any) => {
     const duration = b.availability?.timeDuration
       ? parseInt(b.availability.timeDuration, 10)
       : 60;
