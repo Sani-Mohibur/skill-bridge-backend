@@ -1,6 +1,20 @@
-# SkillBridge — Backend API
+# SkillBridge — Backend
 
-> A robust, role-based REST API powering a tutor-student marketplace platform. Built with **Node.js**, **Express**, **TypeScript**, **Prisma ORM**, and **PostgreSQL**.
+A robust, role-based REST API powering a tutor-student marketplace platform.
+
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Prisma ORM](https://img.shields.io/badge/Prisma_ORM-5A67D8?style=for-the-badge&logo=prisma&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Better Auth](https://img.shields.io/badge/Better_Auth-000000?style=for-the-badge&logo=brandfolder&logoColor=orange)
+
+Description
+
+- **Live API Deployment Server:** [https://skill-bridge-backend-x2sb.onrender.com](https://skill-bridge-backend-x2sb.onrender.com)
+- **Corresponding UI Frontend Client:** [SkillBridge](https://skillbridge-sani.vercel.app)
+
+> ⚠️ **Important Note:** This is the backend data engine layer only. It requires the corresponding user interface client setup to be fully functional. You can find the client repository here: [skill-bridge](https://github.com/Sani-Mohibur/skill-bridge)
 
 ---
 
@@ -46,17 +60,17 @@
 
 ## Tech Stack
 
-| Layer            | Technology                              |
-|------------------|-----------------------------------------|
-| Runtime          | Node.js (ESM)                           |
-| Language         | TypeScript 6                            |
-| Framework        | Express.js 5                            |
-| ORM              | Prisma 7 (`prisma-client-js`)           |
-| Database         | PostgreSQL (Neon serverless)            |
-| Authentication   | better-auth 1.6                         |
-| HTTP Logging     | Morgan                                  |
-| Cross-Origin     | CORS (credentials + cookie support)     |
-| Dev Server       | tsx (watch mode)                        |
+| Layer          | Technology                          |
+| -------------- | ----------------------------------- |
+| Runtime        | Node.js (ESM)                       |
+| Language       | TypeScript 6                        |
+| Framework      | Express.js 5                        |
+| ORM            | Prisma 7 (`prisma-client-js`)       |
+| Database       | PostgreSQL (Neon serverless)        |
+| Authentication | better-auth 1.6                     |
+| HTTP Logging   | Morgan                              |
+| Cross-Origin   | CORS (credentials + cookie support) |
+| Dev Server     | tsx (watch mode)                    |
 
 ---
 
@@ -104,17 +118,8 @@ skill-bridge-backend/
 
 ## Data Models
 
-```
-User ─────────────── 1:1 ──► TutorProfile ─► Availability[] ─► Booking[]
-                   │                       ─► Review[]
-                   │                       ─► Category[]
-                   │
-                   └──── 1:1 ──► StudentProfile ─► Booking[]
-                                                 ─► Review[]
-```
-
 | Model            | Key Fields                                                                    |
-|------------------|-------------------------------------------------------------------------------|
+| ---------------- | ----------------------------------------------------------------------------- |
 | `User`           | `id`, `name`, `email`, `role` (student/tutor/admin), `banned`                 |
 | `TutorProfile`   | `bio`, `skills[]`, `pricePerHour`, `rating`, `isVerified`, `isFeatured`       |
 | `StudentProfile` | `bio`, `education`, `interests[]`, `phone`, `address`                         |
@@ -133,12 +138,12 @@ All responses follow JSON format. Protected routes require a valid session cooki
 
 Handled internally by better-auth at `/api/auth/*`. The library manages sessions via secure HTTP-only cookies.
 
-| Method | Endpoint                        | Description              |
-|--------|---------------------------------|--------------------------|
-| POST   | `/api/auth/sign-up/email`       | Register a new user      |
-| POST   | `/api/auth/sign-in/email`       | Sign in with credentials |
-| POST   | `/api/auth/sign-out`            | Invalidate session       |
-| GET    | `/api/auth/get-session`         | Get current session info |
+| Method | Endpoint                  | Description              |
+| ------ | ------------------------- | ------------------------ |
+| POST   | `/api/auth/sign-up/email` | Register a new user      |
+| POST   | `/api/auth/sign-in/email` | Sign in with credentials |
+| POST   | `/api/auth/sign-out`      | Invalidate session       |
+| GET    | `/api/auth/get-session`   | Get current session info |
 
 > **Registration Note:** Pass `role: "student"` or `role: "tutor"` in the sign-up body. A corresponding profile (`StudentProfile` / `TutorProfile`) is auto-created via a database hook.
 
@@ -148,58 +153,58 @@ Handled internally by better-auth at `/api/auth/*`. The library manages sessions
 
 > No authentication required.
 
-| Method | Endpoint                   | Description                              |
-|--------|----------------------------|------------------------------------------|
-| GET    | `/api/tutor/search`        | Search & filter tutors (skills, rating…) |
-| GET    | `/api/tutor/categories`    | List all tutor categories                |
-| GET    | `/api/tutor/:id`           | Get a single tutor's full profile        |
+| Method | Endpoint                | Description                              |
+| ------ | ----------------------- | ---------------------------------------- |
+| GET    | `/api/tutor/search`     | Search & filter tutors (skills, rating…) |
+| GET    | `/api/tutor/categories` | List all tutor categories                |
+| GET    | `/api/tutor/:id`        | Get a single tutor's full profile        |
 
 ---
 
 ### Availability
 
-| Method | Endpoint                                   | Role       | Description                              |
-|--------|--------------------------------------------|------------|------------------------------------------|
-| GET    | `/api/availability`                        | Public     | All availability slots                   |
-| GET    | `/api/availability/upcoming`               | Public     | All future availability slots            |
-| POST   | `/api/availability/create-slot`            | Tutor      | Create a new availability slot           |
-| GET    | `/api/availability/my-slots`               | Tutor      | Tutor's own slots                        |
-| PUT    | `/api/availability/:id`                    | Tutor      | Update a slot                            |
-| DELETE | `/api/availability/:id`                    | Tutor      | Delete a slot                            |
-| GET    | `/api/availability/student-upcoming`       | Student    | Upcoming slots available to book         |
+| Method | Endpoint                             | Role    | Description                      |
+| ------ | ------------------------------------ | ------- | -------------------------------- |
+| GET    | `/api/availability`                  | Public  | All availability slots           |
+| GET    | `/api/availability/upcoming`         | Public  | All future availability slots    |
+| POST   | `/api/availability/create-slot`      | Tutor   | Create a new availability slot   |
+| GET    | `/api/availability/my-slots`         | Tutor   | Tutor's own slots                |
+| PUT    | `/api/availability/:id`              | Tutor   | Update a slot                    |
+| DELETE | `/api/availability/:id`              | Tutor   | Delete a slot                    |
+| GET    | `/api/availability/student-upcoming` | Student | Upcoming slots available to book |
 
 ---
 
 ### Bookings
 
-| Method | Endpoint                                     | Role    | Description                                 |
-|--------|----------------------------------------------|---------|---------------------------------------------|
-| POST   | `/api/bookings/book`                         | Student | Book an availability slot                   |
-| DELETE | `/api/bookings/cancel/:id`                   | Student | Cancel a booking                            |
-| GET    | `/api/bookings/student-list`                 | Student | All of the student's bookings               |
-| GET    | `/api/bookings/student-stats`                | Student | Student booking statistics                  |
-| POST   | `/api/bookings/complete`                     | Tutor   | Mark a booking as completed                 |
-| GET    | `/api/bookings/tutor-list`                   | Tutor   | All bookings for the tutor                  |
-| GET    | `/api/bookings/slot-students/:availabilityId`| Tutor   | Students enrolled in a specific slot        |
+| Method | Endpoint                                      | Role    | Description                          |
+| ------ | --------------------------------------------- | ------- | ------------------------------------ |
+| POST   | `/api/bookings/book`                          | Student | Book an availability slot            |
+| DELETE | `/api/bookings/cancel/:id`                    | Student | Cancel a booking                     |
+| GET    | `/api/bookings/student-list`                  | Student | All of the student's bookings        |
+| GET    | `/api/bookings/student-stats`                 | Student | Student booking statistics           |
+| POST   | `/api/bookings/complete`                      | Tutor   | Mark a booking as completed          |
+| GET    | `/api/bookings/tutor-list`                    | Tutor   | All bookings for the tutor           |
+| GET    | `/api/bookings/slot-students/:availabilityId` | Tutor   | Students enrolled in a specific slot |
 
 ---
 
 ### Reviews
 
-| Method | Endpoint                            | Role    | Description                            |
-|--------|-------------------------------------|---------|----------------------------------------|
-| GET    | `/api/reviews/tutor/:tutorProfileId`| Public  | All reviews for a tutor                |
-| POST   | `/api/reviews/add`                  | Student | Submit a review for a completed booking|
-| GET    | `/api/reviews/my-reviews`           | Student | Student's submitted reviews            |
+| Method | Endpoint                             | Role    | Description                             |
+| ------ | ------------------------------------ | ------- | --------------------------------------- |
+| GET    | `/api/reviews/tutor/:tutorProfileId` | Public  | All reviews for a tutor                 |
+| POST   | `/api/reviews/add`                   | Student | Submit a review for a completed booking |
+| GET    | `/api/reviews/my-reviews`            | Student | Student's submitted reviews             |
 
 ---
 
 ### Profile
 
-| Method | Endpoint            | Role             | Description                             |
-|--------|---------------------|------------------|-----------------------------------------|
-| GET    | `/api/profile/me`   | Student / Tutor  | Get own profile (role-aware response)   |
-| PUT    | `/api/profile/update` | Student / Tutor | Update own profile                      |
+| Method | Endpoint              | Role            | Description                           |
+| ------ | --------------------- | --------------- | ------------------------------------- |
+| GET    | `/api/profile/me`     | Student / Tutor | Get own profile (role-aware response) |
+| PUT    | `/api/profile/update` | Student / Tutor | Update own profile                    |
 
 ---
 
@@ -207,18 +212,18 @@ Handled internally by better-auth at `/api/auth/*`. The library manages sessions
 
 > All endpoints require the `admin` role.
 
-| Method | Endpoint                            | Description                                    |
-|--------|-------------------------------------|------------------------------------------------|
-| GET    | `/api/admin/stats`                  | Platform-wide dashboard statistics             |
-| GET    | `/api/admin/users`                  | List all users                                 |
-| PATCH  | `/api/admin/users/:userId/ban`      | Toggle user ban status                         |
-| GET    | `/api/admin/tutors`                 | List all tutors                                |
-| PATCH  | `/api/admin/tutors/:id/featured`    | Toggle tutor featured status                   |
-| PATCH  | `/api/admin/tutors/:id/verify`      | Toggle tutor verification status               |
-| GET    | `/api/admin/bookings`              | View all bookings across the platform          |
-| GET    | `/api/admin/availabilities`         | View all availability slots                    |
-| POST   | `/api/admin/categories`             | Create a new tutor category                    |
-| DELETE | `/api/admin/categories/:id`         | Delete a category                              |
+| Method | Endpoint                         | Description                           |
+| ------ | -------------------------------- | ------------------------------------- |
+| GET    | `/api/admin/stats`               | Platform-wide dashboard statistics    |
+| GET    | `/api/admin/users`               | List all users                        |
+| PATCH  | `/api/admin/users/:userId/ban`   | Toggle user ban status                |
+| GET    | `/api/admin/tutors`              | List all tutors                       |
+| PATCH  | `/api/admin/tutors/:id/featured` | Toggle tutor featured status          |
+| PATCH  | `/api/admin/tutors/:id/verify`   | Toggle tutor verification status      |
+| GET    | `/api/admin/bookings`            | View all bookings across the platform |
+| GET    | `/api/admin/availabilities`      | View all availability slots           |
+| POST   | `/api/admin/categories`          | Create a new tutor category           |
+| DELETE | `/api/admin/categories/:id`      | Delete a category                     |
 
 ---
 
@@ -272,15 +277,15 @@ CLIENT_URL=http://localhost:3000
 BACKEND_URL=http://localhost:5000
 ```
 
-| Variable           | Description                                        | Required |
-|--------------------|----------------------------------------------------|----------|
-| `PORT`             | Port the server listens on                         | ✅        |
-| `DATABASE_URL`     | Pooled PostgreSQL connection string (Prisma)       | ✅        |
-| `DIRECT_URL`       | Direct (non-pooled) connection for migrations      | ✅        |
-| `BETTER_AUTH_SECRET` | Secret key for signing auth tokens               | ✅        |
-| `BETTER_AUTH_URL`  | Public base URL of the auth endpoint               | ✅        |
-| `CLIENT_URL`       | Allowed CORS origin (frontend URL)                 | ✅        |
-| `BACKEND_URL`      | Backend's own base URL (used by seeder)            | ✅        |
+| Variable             | Description                                   | Required |
+| -------------------- | --------------------------------------------- | -------- |
+| `PORT`               | Port the server listens on                    | ✅       |
+| `DATABASE_URL`       | Pooled PostgreSQL connection string (Prisma)  | ✅       |
+| `DIRECT_URL`         | Direct (non-pooled) connection for migrations | ✅       |
+| `BETTER_AUTH_SECRET` | Secret key for signing auth tokens            | ✅       |
+| `BETTER_AUTH_URL`    | Public base URL of the auth endpoint          | ✅       |
+| `CLIENT_URL`         | Allowed CORS origin (frontend URL)            | ✅       |
+| `BACKEND_URL`        | Backend's own base URL (used by seeder)       | ✅       |
 
 ### Database Setup
 
@@ -296,6 +301,7 @@ npm run db:seed
 ```
 
 > **Prisma Studio** — Inspect and manage your data visually:
+>
 > ```bash
 > npm run db:studio
 > ```
@@ -318,15 +324,15 @@ Health check: `GET /` → `{ "status": "OK", "timestamp": "..." }`
 
 ## Scripts
 
-| Script            | Command                        | Description                              |
-|-------------------|--------------------------------|------------------------------------------|
-| `dev`             | `tsx watch src/server.ts`      | Start dev server with hot-reload         |
-| `build`           | `tsc`                          | Compile TypeScript to `dist/`            |
-| `start`           | `node dist/src/server.js`      | Run compiled production build            |
-| `db:migrate`      | `npx prisma migrate dev`       | Create & run a new migration             |
-| `db:generate`     | `npx prisma generate`          | Regenerate Prisma client after changes   |
-| `db:studio`       | `npx prisma studio`            | Open Prisma Studio GUI                   |
-| `db:seed`         | `npx prisma db seed`           | Seed the database with the admin account |
+| Script        | Command                   | Description                              |
+| ------------- | ------------------------- | ---------------------------------------- |
+| `dev`         | `tsx watch src/server.ts` | Start dev server with hot-reload         |
+| `build`       | `tsc`                     | Compile TypeScript to `dist/`            |
+| `start`       | `node dist/src/server.js` | Run compiled production build            |
+| `db:migrate`  | `npx prisma migrate dev`  | Create & run a new migration             |
+| `db:generate` | `npx prisma generate`     | Regenerate Prisma client after changes   |
+| `db:studio`   | `npx prisma studio`       | Open Prisma Studio GUI                   |
+| `db:seed`     | `npx prisma db seed`      | Seed the database with the admin account |
 
 ---
 
@@ -345,9 +351,3 @@ BACKEND_URL=https://skill-bridge-backend-x2sb.onrender.com
 ```
 
 > ⚠️ **Important:** `BETTER_AUTH_URL` must point to the backend's own deployed URL (not the frontend) to avoid auth state mismatch in cross-origin deployments.
-
----
-
-## License
-
-ISC
