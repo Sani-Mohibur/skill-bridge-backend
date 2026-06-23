@@ -9,12 +9,12 @@ A robust, role-based REST API powering a tutor-student marketplace platform.
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Better Auth](https://img.shields.io/badge/Better_Auth-000000?style=for-the-badge&logo=brandfolder&logoColor=orange)
 
-Description
+## 🌐 Live Links
 
-- **Live API Deployment Server:** [https://skill-bridge-backend-x2sb.onrender.com](https://skill-bridge-backend-x2sb.onrender.com)
-- **Corresponding UI Frontend Client:** [SkillBridge](https://skillbridge-sani.vercel.app)
+- **Backend API Server:** [https://skill-bridge-backend-x2sb.onrender.com](https://skill-bridge-backend-x2sb.onrender.com)
+- **Frontend UI Client:** [https://skillbridge-sani.vercel.app](https://skillbridge-sani.vercel.app)
 
-> ⚠️ **Important Note:** This is the backend data engine layer only. It requires the corresponding user interface client setup to be fully functional. You can find the client repository here: [skill-bridge](https://github.com/Sani-Mohibur/skill-bridge)
+> ⚠️ **Important Note:** This repository contains the backend service layer only. To experience the full application, it must be paired with the corresponding user interface. You can find the frontend repository here: [skill-bridge](https://github.com/Sani-Mohibur/skill-bridge)
 
 ---
 
