@@ -59,14 +59,24 @@ const cancelBookingService = async (userId: string, bookingId: string) => {
     );
   }
 
-  // Atomically free up the availability slot and delete the booking registration
   return await prisma.$transaction(async (tx: any) => {
-    await tx.availability.update({
-      where: { id: booking.availabilityId },
-      data: { isBooked: false },
+    // 1. Delete the current student's booking registration first
+    await tx.booking.delete({ where: { id: bookingId } });
+
+    // 2. Check if there are ANY remaining bookings left for this slot
+    const remainingBookingsCount = await tx.booking.count({
+      where: { availabilityId: booking.availabilityId },
     });
 
-    return await prisma.booking.delete({ where: { id: bookingId } });
+    // 3. Only flip isBooked to false if NO other students are left in the session
+    if (remainingBookingsCount === 0) {
+      await tx.availability.update({
+        where: { id: booking.availabilityId },
+        data: { isBooked: false },
+      });
+    }
+
+    return true;
   });
 };
 
